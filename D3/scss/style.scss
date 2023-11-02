@@ -1,0 +1,214 @@
+@import "./partials/variables";
+@import "./partials/mixins";
+
+body {
+  margin: $margin-0;
+}
+
+/*
+header {
+  font-size: 1.4rem;
+}
+
+header > div {
+  padding: 2rem;
+  border: 2px solid $main-color;
+}
+
+header > div > ul {
+  background-color: antiquewhite;
+}
+
+header > div > ul li {
+  font-weight: 600;
+}
+
+header > div > ul li::marker {
+  content: "👍"; 
+} */
+
+// per ottimizzare questo ^^ si può utilizzare il : nesting (o annidamento dei selettori css)
+// sass permette inoltre di inserire la media query all'interno dei selettori
+
+header {
+  font-size: 1.4rem;
+  @media screen and (max-width: 575px) {
+    font-size: 0.8rem;
+  }
+
+  div {
+    padding: 2rem;
+    border: 2px solid $main-color;
+
+    ul {
+      background-color: antiquewhite;
+
+      li {
+        font-weight: 600;
+
+        //parent selector ( riprende il selettore del genitore senza doverlo riscrivere)
+        &::marker {
+          content: "👍";
+        }
+
+        &:hover {
+          text-decoration: underline;
+          cursor: pointer;
+        }
+      }
+    }
+    button {
+      background-color: red;
+    }
+  }
+}
+main {
+  @media screen and (max-width: 575px) {
+    color: red;
+  }
+}
+
+// 2b) parent selector (&)
+// 2c) media query integrate nel selettore
+
+.section-title {
+  font: {
+    family: "Courier new", Courier, monospace;
+    size: 2rem;
+  }
+
+  &:hover {
+    color: aqua;
+    span {
+      color: red;
+      text-decoration: underline red;
+    }
+    text-decoration: underline black;
+  }
+}
+
+.main-title {
+  font: {
+    family: "Verdana", sans-serif;
+    weight: 300;
+  }
+
+  letter-spacing: -1.5px;
+
+  &::before {
+    content: "👍";
+  }
+}
+
+section {
+  counter-increment: mySectionCounter;
+  padding-inline-start: 1rem;
+  h3 {
+    font-weight: 100;
+
+    &::before {
+      content: counter(mySectionCounter) ". ";
+    }
+  }
+}
+
+// 3) extend (@extend) è in grado di riprendere un blocco di css di un id/classe/tag definita in precedenza
+
+.main-title-alt {
+  @extend .main-title;
+  color: $main-color;
+}
+
+// 4) Placeholder (%nomePlaceholder) serve ad incorporare un blocco css che da solo non verrà mai renderizzato
+// rispetto ad estendere elementi esistenti, sarà un blocco che esisterà solo nel momento in cui verrà utilizzato dentro uan definizione di qualche tipo (id/class/element)
+
+%main-btn {
+  background-color: scale-color($btn-color, $blackness: 60%);
+  color: green;
+  padding: 0.25rem 0.75rem;
+  border: 2px solid red;
+  border-radius: 20px;
+}
+
+.btn-1 {
+  @extend %main-btn;
+  border-color: $btn-color;
+}
+
+.btn-2 {
+  @extend %main-btn;
+  border-color: adjust-hue($btn-color, 60deg);
+}
+.btn-3 {
+  @extend %main-btn;
+  border-color: adjust-hue($btn-color, 120deg);
+}
+
+// 5) mixing- blocco di codice che può generarsi anche a partire da valori  ( o parametri ) dinamici
+
+.box-1 {
+  @include customBox($main-color, 6px, 2px);
+}
+
+.box-2 {
+  @include customBox(red, 2px, 10px);
+}
+
+.box-3 {
+  @include customBox($btn-color, 0px);
+}
+
+// 6) interpolazione di valore #{}
+
+.box-4 {
+  @include dynamicBox(300px, palegoldenrod, color);
+}
+
+.box-5 {
+  @include dynamicBox(300px, url(./assets/img/th.jpeg), image);
+}
+
+.box-6 {
+  @include dynamicBox(300px, url(./assets/img/th.jpeg), image);
+}
+
+// 7) CICLO FOR
+
+// @for $contatore from 0 to 5 ==> <start> to <end> dove "to" rappresenta il valore con <end> ESCLUSO
+// @for $contatore from 0 through 5 ==> <start> through <end> dove "through" rappresenta il valore con <end> INCLUSO
+
+@for $i from 1 through 5 {
+  .custom-ps-#{$i} {
+    padding-inline-start: $i * 10px;
+  }
+}
+
+// 8) ciclo Each
+
+// datatype Lista (list)
+$colorValues: red, green, blue, yellow, purple, orange;
+@each $el in $colorValues {
+  .box-#{$el} {
+    background-color: $el;
+  }
+}
+
+// datatype Map (chiave-valore)
+
+$sizes: (
+  xs: 10px,
+  sm: 20px,
+  md: 30px,
+  lg: 50px,
+  xl: 100px,
+);
+
+@each $key, $value in $sizes {
+  .padding-inline-#{$key} {
+    padding-inline: $value;
+  }
+
+  .padding-block-#{$key} {
+    padding-block: $value;
+  }
+}
